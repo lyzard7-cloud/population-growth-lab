@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f4f7f7">
+  <meta name="description" content="개체군 성장곡선 J자형과 S자형의 원리를 직접 조작하며 배우는 스마트폰 최적화 생명과학 실험실">
+  <title>개체군 성장곡선 연구소 | J자형과 S자형</title>
+  <style>
+    :root {--ink:#172b35;--sub:#62757c;--muted:#89969a;--line:#e4ebeb;--bg:#f4f7f7;--card:#fff;--j:#fa785b;--jlight:#fff0eb;--s:#079f91;--slight:#e8f9f5;--navy:#1b3440;--shadow:0 7px 30px rgba(26,51,58,.055)}
+    * {box-sizing:border-box}
+    html {scroll-behavior:smooth}
+    body {margin:0;background:radial-gradient(ellipse 90% 310px at 48% 0%,#e2f5ee 0%,rgba(244,247,247,0) 94%),var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif;line-height:1.5;-webkit-tap-highlight-color:transparent}
+    button,input,select {font:inherit}
+    button {cursor:pointer}
+    button:focus-visible,input:focus-visible,select:focus-visible {outline:3px solid #79beff;outline-offset:3px}
+    .app {max-width:540px;min-width:290px;margin:0 auto;padding:17px 16px calc(48px + env(safe-area-inset-bottom))}
+    .topline {display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:15px}
+    .brand {display:flex;align-items:center;gap:8px;font-size:12px;font-weight:850;letter-spacing:.095em;color:#176d68}
+    .brand-icon {width:28px;height:28px;border-radius:9px;background:#d1f3eb;display:grid;place-items:center;font-size:16px}
+    .top-pill {font-size:11px;color:#526972;background:rgba(255,255,255,.9);padding:7px 10px;border:1px solid #e5ebeb;border-radius:50px;white-space:nowrap}
+    h1 {font-size:clamp(27px,7.8vw,36px);margin:0;letter-spacing:-.065em;line-height:1.21;font-weight:850}
+    .intro {font-size:13px;line-height:1.7;color:#60757b;margin:11px 0 18px;word-break:keep-all}
+    .intro em {font-style:normal;color:#147e76;font-weight:800}
+    .section-title {font-size:14px;font-weight:850;letter-spacing:-.025em;margin:0 0 10px}
+    .switch {display:grid;grid-template-columns:1fr 1fr 1.27fr;gap:5px;background:#e8eeed;border-radius:15px;padding:5px;margin-bottom:16px}
+    .switch button {min-height:43px;border:0;background:transparent;border-radius:11px;color:#708085;font-size:12.5px;font-weight:750;transition:.18s ease;padding:6px 2px}
+    .switch button[aria-pressed="true"] {background:#fff;color:#173640;box-shadow:0 3px 11px #314c4c13}
+    .panel {background:var(--card);border:1px solid #e9eeee;border-radius:20px;box-shadow:var(--shadow)}
+    .quick-stat {display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:10px}
+    .quick-stat.single {grid-template-columns:1fr}
+    .stat {border-radius:17px;padding:13px 14px 12px;min-height:112px;overflow:hidden;position:relative;border:1px solid transparent}
+    .stat.j {background:#fff4ef;border-color:#ffe3da}
+    .stat.s {background:#eaf8f4;border-color:#d6eee8}
+    .stat-head {display:flex;gap:6px;align-items:center;justify-content:space-between;color:#647981;font-size:11px;font-weight:760}
+    .stat-head .tag {font-size:10px;padding:3px 7px;border-radius:20px;background:#ffffffc7}
+    .stat-number {font-variant-numeric:tabular-nums;font-size:30px;letter-spacing:-.055em;line-height:1.2;margin-top:5px;font-weight:900}
+    .stat.j .stat-number {color:#e3694c}
+    .stat.s .stat-number {color:#087e76}
+    .stat-unit {font-size:11px;color:#7d8e91;font-weight:600;margin-left:4px;letter-spacing:0}
+    .stat-delta {font-size:11.5px;color:#5c7276;margin-top:5px;letter-spacing:-.02em}
+    .chart-card {padding:17px 13px 13px;margin-bottom:10px}
+    .card-top {display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin:0 3px}
+    .card-top h2 {font-size:15px;font-weight:850;letter-spacing:-.035em;margin:0}
+    .mini-hint {font-size:10px;color:#89969a;white-space:nowrap;padding-top:3px}
+    .legend {display:flex;gap:13px;flex-wrap:wrap;margin:9px 3px 0;font-size:11px;color:#728287}
+    .legend-item {display:inline-flex;align-items:center;gap:5px}
+    .legend-mark {display:inline-block;width:18px;height:4px;border-radius:10px;background:var(--j)}
+    .legend-mark.s {background:var(--s)}
+    .legend-mark.k {background:repeating-linear-gradient(to right,#9faeb1 0,#9faeb1 4px,transparent 4px,transparent 7px);height:2px}
+    #graph {width:100%;height:auto;display:block;overflow:visible;touch-action:pan-y}
+    .graph-note {font-size:11px;color:#789096;text-align:center;padding-top:2px;min-height:17px;word-break:keep-all}
+    .track-area {padding:4px 8px 0}
+    .track-meta {display:flex;align-items:center;justify-content:space-between;font-size:11px;color:#61777e;margin-bottom:7px}
+    .track-meta output {font-size:12px;font-weight:850;color:#1e3e49;font-variant-numeric:tabular-nums}
+    input[type=range] {appearance:none;-webkit-appearance:none;width:100%;height:6px;border-radius:20px;outline:none;background:linear-gradient(to right,#159b8d var(--fill,0%),#e3eaea var(--fill,0%));cursor:pointer;margin:10px 0 13px}
+    input[type=range]::-webkit-slider-thumb {appearance:none;width:24px;height:24px;border:5px solid white;border-radius:50%;background:#13998d;box-shadow:0 1px 9px #345a5b44}
+    input[type=range]::-moz-range-thumb {width:14px;height:14px;border:5px solid white;border-radius:50%;background:#13998d;box-shadow:0 1px 9px #345a5b44}
+    .actions {display:grid;grid-template-columns:.9fr 1.05fr 1.25fr .9fr;gap:7px;margin:10px 0}
+    .action {border:1px solid #e0e9e9;background:#fff;border-radius:13px;min-height:51px;color:#344d55;font-size:12px;font-weight:800;padding:5px 2px;box-shadow:0 1px 2px #24363a04}
+    .action.primary {background:#184752;color:#fff;border-color:#184752;font-size:13px}
+    .action:disabled {opacity:.45;cursor:not-allowed}
+    .speed-line {display:flex;align-items:center;justify-content:space-between;margin:2px 3px 18px;font-size:11px;color:#779093}
+    .speed-buttons {display:flex;gap:5px}
+    .speed-buttons button {font-size:11px;min-width:45px;min-height:32px;border:1px solid #dce6e5;background:#fff;border-radius:9px;color:#5f797d}
+    .speed-buttons button[aria-pressed="true"] {background:#d8f3eb;border-color:#aadbd0;color:#096c65;font-weight:850}
+    .why {padding:16px;margin-bottom:14px;border-radius:19px;border:1px solid #d8ebe6;background:#f3fbf8;position:relative}
+    .eyebrow {display:flex;align-items:center;gap:6px;color:#117e74;font-size:11px;font-weight:850;letter-spacing:.035em;margin-bottom:7px}
+    .why-title {font-size:16px;font-weight:850;letter-spacing:-.05em;margin:0 0 7px;word-break:keep-all}
+    .why-text {font-size:13px;color:#476369;line-height:1.7;margin:0;word-break:keep-all}
+    .why-rule {font-size:12px;color:#2c756e;font-weight:750;background:#e3f5ee;border:1px solid #caebdf;border-radius:10px;padding:9px 10px;margin-top:11px;line-height:1.7;word-break:keep-all}
+    .controls {padding:17px 17px 9px;margin-bottom:14px}
+    .controls-header {display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}
+    .controls-header h2 {font-size:15px;font-weight:850;margin:0}
+    .reset-settings {border:0;background:#eef4f3;padding:6px 10px;border-radius:10px;color:#5b7279;font-size:11px;min-height:33px}
+    .control-group {padding:13px 0 9px;border-bottom:1px solid #f0f3f3}
+    .control-group:last-of-type {border-bottom:0}
+    .control-heading {display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+    .control-name {font-size:13px;font-weight:800;color:#324851}
+    .control-value {font-size:14px;font-weight:850;color:#086e66;white-space:nowrap;font-variant-numeric:tabular-nums}
+    .control-desc {font-size:11px;color:#89999d;margin-top:3px;line-height:1.5;word-break:keep-all}
+    .controls input[type=range] {margin:15px 0 6px;height:5px}
+    .slider-ends {display:flex;justify-content:space-between;font-size:10px;color:#a2aeb0}
+    .select-wrap {display:flex;align-items:center;justify-content:space-between;gap:12px;padding:7px 0 5px}
+    select {color:#23414a;background:#f3f7f7;border:1px solid #e4eded;border-radius:11px;padding:10px 30px 10px 11px;font-size:13px;font-weight:750;min-width:135px;max-width:58%}
+    .control-disabled {opacity:.45}
+    .control-disabled input {pointer-events:none}
+    .model-values {margin-bottom:14px;padding:17px}
+    .model-values h2 {font-size:15px;margin:0 0 3px;font-weight:850}
+    .subheading {font-size:11px;color:#829397;margin:0 0 13px;line-height:1.6}
+    .calc {border:1px solid #eaf0f0;background:#fafcfc;border-radius:13px;padding:12px 13px;margin-top:9px}
+    .calc-title {display:flex;justify-content:space-between;align-items:center;font-weight:850;font-size:12px;margin-bottom:10px}
+    .calc-title.j {color:#de7559}
+    .calc-title.s {color:#0b9587}
+    .calc-grid {display:grid;grid-template-columns:1fr auto;gap:4px 8px;font-size:12px;color:#62767b;align-items:center}
+    .calc-grid .val {font-variant-numeric:tabular-nums;color:#334d55;text-align:right;font-weight:700}
+    .calc-grid .total {font-weight:850;color:#223f48;border-top:1px solid #e5ecec;margin-top:5px;padding-top:8px}
+    .formula {font-size:10.5px;color:#728a8d;background:#fff;border-radius:7px;padding:7px 9px;margin-top:10px;font-variant-numeric:tabular-nums;word-break:keep-all}
+    .learn {margin-top:16px}
+    .learn h2 {font-size:16px;letter-spacing:-.03em;margin:0 0 8px}
+    .learn-card {padding:14px 16px;border:1px solid #e6ebec;border-radius:15px;background:#fff;margin-bottom:9px}
+    .learn-kicker {font-size:11px;font-weight:850;margin-bottom:5px}
+    .learn-kicker.j {color:#dd7459}
+    .learn-kicker.s {color:#099b8d}
+    .learn-card p {margin:0;color:#5c7378;font-size:12px;line-height:1.8;word-break:keep-all}
+    .step-chain {font-size:11.5px;display:flex;flex-wrap:wrap;gap:5px;align-items:center;margin-top:11px;color:#3b6870}
+    .step-chain span {padding:4px 7px;background:#eff5f5;border-radius:7px}
+    .quiz {border:1px solid #dfebe7;background:#fff;border-radius:19px;padding:17px;margin-top:18px}
+    .quiz h2 {font-size:16px;margin:0 0 4px;letter-spacing:-.035em}
+    .quiz p {color:#657b81;font-size:12px;line-height:1.6;margin:0 0 12px}
+    .answers {display:grid;gap:7px}
+    .answer {border:1px solid #e0eaea;text-align:left;display:block;width:100%;background:#f9fbfb;border-radius:12px;min-height:49px;padding:10px 12px;color:#3d565e;font-size:12px;line-height:1.5}
+    .answer.correct {background:#e6f8ef;border-color:#82d5af;color:#096b51}
+    .answer.wrong {background:#fff0ed;border-color:#efaa99;color:#ae5b49}
+    .quiz-feedback {font-size:12px;line-height:1.7;margin-top:11px;min-height:0;color:#41666b;word-break:keep-all}
+    .foot {color:#91a0a2;font-size:10.5px;line-height:1.8;margin:16px 2px 0;word-break:keep-all}
+    @media (max-width:350px) {.app{padding-left:11px;padding-right:11px}.stat{padding:11px}.stat-number{font-size:26px}.action{font-size:11px}.mini-hint{font-size:9px}.switch button{font-size:11px}}
+    @media (min-width:690px) {.app{padding-top:28px;padding-bottom:65px}h1{font-size:36px}.intro{font-size:14px}}
+    @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.switch button{transition:none}}
+  </style>
+</head>
+<body>
+<main class="app">
+  <header>
+    <div class="topline"><div class="brand"><span class="brand-icon">🌿</span> POPULATION LAB</div><span class="top-pill">생명과학 · 개체군의 특성</span></div>
+    <h1>왜 J자가 되고,<br>왜 S자가 될까?</h1>
+    <p class="intro">처음에는 똑같이 늘어나는 개체군. <em>자원이 제한되는 순간</em> 성장곡선은 어떻게 달라질까요? 직접 세대를 진행하며 확인해 보세요.</p>
+  </header>
+
+  <nav class="switch" aria-label="성장 모형 선택">
+    <button type="button" data-mode="j" aria-pressed="false">↗ J자형</button>
+    <button type="button" data-mode="s" aria-pressed="false">〰 S자형</button>
+    <button type="button" data-mode="both" aria-pressed="true">⇄ 두 모형 비교</button>
+  </nav>
+
+  <section aria-label="현재 개체군 개체 수" class="quick-stat" id="stats">
+    <div class="stat j" id="statJ"><div class="stat-head"><span><span class="species-icon">🐰</span> J자형 · 자원 무제한</span><span class="tag">J</span></div><div class="stat-number"><span id="popJ">20.0</span><span class="stat-unit">개체</span></div><div class="stat-delta" id="deltaJ">다음 세대 증가 +4.0</div></div>
+    <div class="stat s" id="statS"><div class="stat-head"><span><span class="species-icon">🐰</span> S자형 · 자원 제한</span><span class="tag">S</span></div><div class="stat-number"><span id="popS">20.0</span><span class="stat-unit">개체</span></div><div class="stat-delta" id="deltaS">다음 세대 증가 +3.5</div></div>
+  </section>
+
+  <section class="panel chart-card" aria-labelledby="graph-title">
+    <div class="card-top"><h2 id="graph-title">📈 세대별 개체 수 변화</h2><span class="mini-hint">가로: 시간 / 세대</span></div>
+    <div class="legend"><span class="legend-item" id="legendJ"><i class="legend-mark"></i>J자형</span><span class="legend-item" id="legendS"><i class="legend-mark s"></i>S자형</span><span class="legend-item"><i class="legend-mark k"></i>환경수용력 K</span></div>
+    <svg id="graph" viewBox="0 0 360 237" role="img" aria-label="J자와 S자 개체군 성장곡선 그래프" xmlns="http://www.w3.org/2000/svg">
+      <defs><clipPath id="clipChart"><rect x="39" y="16" width="304" height="190" /></clipPath><linearGradient id="sFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#25b9a1" stop-opacity=".20"/><stop offset="100%" stop-color="#25b9a1" stop-opacity="0"/></linearGradient></defs>
+      <g id="grid"></g>
+      <g clip-path="url(#clipChart)"><path id="sArea" fill="url(#sFill)"/><path id="sPath" fill="none" stroke="#079f91" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><path id="jPath" fill="none" stroke="#fa785b" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><g id="pointMarkers"></g></g>
+      <g id="graphOverlay"></g>
+    </svg>
+    <div class="graph-note" id="graphNote" aria-live="polite">▶ 한 세대씩 진행하거나 자동 재생해 보세요.</div>
+    <div class="track-area"><div class="track-meta"><span>실험 시간 이동 · 그래프를 되돌려 볼 수 있어요</span><output id="generationText">0 / 30세대</output></div><label for="generation" class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">세대 선택</label><input type="range" id="generation" min="0" max="30" step="1" value="0" aria-label="실험 세대 선택"></div>
+  </section>
+
+  <div class="actions" aria-label="시간 조절">
+    <button type="button" class="action" id="reset">↺ 처음</button>
+    <button type="button" class="action" id="next">+1 세대</button>
+    <button type="button" class="action primary" id="play">▶ 자동 재생</button>
+    <button type="button" class="action" id="last">끝까지 ↗</button>
+  </div>
+  <div class="speed-line"><span>세대 진행 속도</span><div class="speed-buttons" role="group" aria-label="재생 속도"><button type="button" data-speed="1" aria-pressed="true">1배속</button><button type="button" data-speed="2" aria-pressed="false">2배속</button></div></div>
+
+  <section class="why" aria-live="polite" aria-atomic="true">
+    <div class="eyebrow">💡 지금 성장곡선이 이렇게 되는 이유</div>
+    <h2 class="why-title" id="whyTitle">같은 출발점, 다른 성장 법칙</h2>
+    <p class="why-text" id="whyText">출생률과 자연 사망률이 같아도 환경의 자원이 제한되면 개체 수가 달라집니다. 재생을 눌러 변화를 확인해 보세요.</p>
+    <div class="why-rule" id="whyRule">J자형: 개체가 많을수록 더 많은 개체가 태어남 → 증가 폭 확대<br>S자형: 경쟁이 심해질수록 순증가량 감소 → 수용력 K 근처에서 정체</div>
+  </section>
+
+  <section class="panel controls" aria-labelledby="controls-title">
+    <div class="controls-header"><h2 id="controls-title">🎛️ 실험 조건 바꾸기</h2><button class="reset-settings" id="resetSettings" type="button">기본값으로</button></div>
+    <div class="select-wrap"><div><div class="control-name">관찰할 생물</div><div class="control-desc">생물 그림만 변경되며 계산 원리는 같아요.</div></div><select id="species" aria-label="생물 종류 선택"><option value="🐰">🐰 토끼</option><option value="🦌">🦌 사슴</option><option value="🦠">🦠 세균</option></select></div>
+    <div class="control-group"><div class="control-heading"><label for="initial" class="control-name">처음 개체 수 N₀</label><output for="initial" class="control-value" id="initialValue">20개체</output></div><div class="control-desc">처음에 서식지에 존재하는 개체 수</div><input id="initial" type="range" min="10" max="60" step="5" value="20"><div class="slider-ends"><span>10개체</span><span>60개체</span></div></div>
+    <div class="control-group"><div class="control-heading"><label for="birth" class="control-name">세대별 출생률</label><output for="birth" class="control-value" id="birthValue">26%</output></div><div class="control-desc">개체가 많아질수록 출생하는 개체의 수도 증가해요.</div><input id="birth" type="range" min="12" max="40" step="1" value="26"><div class="slider-ends"><span>12%</span><span>40%</span></div></div>
+    <div class="control-group"><div class="control-heading"><label for="death" class="control-name">세대별 자연 사망률</label><output for="death" class="control-value" id="deathValue">6%</output></div><div class="control-desc">자원 경쟁과 별개로 발생하는 사망</div><input id="death" type="range" min="0" max="10" step="1" value="6"><div class="slider-ends"><span>0%</span><span>10%</span></div></div>
+    <div class="control-group" id="capacityGroup"><div class="control-heading"><label for="capacity" class="control-name">환경수용력 K</label><output for="capacity" class="control-value" id="capacityValue">160개체</output></div><div class="control-desc" id="capacityDesc">서식지가 장기간 유지할 수 있는 개체 수 · S자형에만 영향을 줍니다.</div><input id="capacity" type="range" min="80" max="300" step="10" value="160"><div class="slider-ends"><span>80개체</span><span>300개체</span></div></div>
+    <p class="control-desc" style="margin:9px 1px 3px">※ 조건을 바꾸면 0세대로 돌아갑니다. 두 모형에는 동일한 출생률·자연 사망률을 적용합니다.</p>
+  </section>
+
+  <section class="panel model-values" id="calcPanel" aria-labelledby="calcTitle">
+    <h2 id="calcTitle">🔎 실제 계산 들여다보기</h2>
+    <p class="subheading">현재 개체 수를 기준으로 ‘다음 1세대’의 변화를 계산합니다.</p>
+    <div id="calcJ" class="calc"><div class="calc-title j"><span>🟠 J자형 — 자원 제한 없음</span><span id="jSummary">+</span></div><div class="calc-grid"><span>출생</span><span class="val" id="jBirth">+</span><span>자연 사망</span><span class="val" id="jDeath">−</span><span class="total">다음 세대 순증가</span><span class="val total" id="jNet">+</span></div><div class="formula">순증가량 = (출생률 − 자연 사망률) × 현재 개체 수</div></div>
+    <div id="calcS" class="calc"><div class="calc-title s"><span>🟢 S자형 — 자원 제한 있음</span><span id="sSummary">+</span></div><div class="calc-grid"><span>출생</span><span class="val" id="sBirth">+</span><span>자연 사망</span><span class="val" id="sDeath">−</span><span>환경저항에 따른 추가 사망</span><span class="val" id="sCompetition">−</span><span class="total">다음 세대 순증가</span><span class="val total" id="sNet">+</span></div><div class="formula" id="sFormula">순증가량 = (출생률 − 사망률) × N × (1 − N / K)</div></div>
+  </section>
+
+  <section class="learn" aria-label="개념 정리">
+    <h2>🧠 곡선의 모양이 결정되는 원리</h2>
+    <article class="learn-card"><div class="learn-kicker j">01. J자형 · 양의 되먹임</div><p>자원이 충분하다고 가정하면 개체 수가 늘수록 새로 태어나는 개체 수도 커집니다. 매 세대 같은 비율로 증가하므로 <span style="color:#cf674f;font-weight:800">증가하는 개체의 절대 수가 계속 커져</span> 그래프가 위로 가파르게 휘어집니다.</p><div class="step-chain"><span>개체 수 ↑</span> → <span>출생 개체 수 ↑</span> → <span>다음 세대 더 빠른 증가</span></div></article>
+    <article class="learn-card"><div class="learn-kicker s">02. S자형 · 환경저항과 환경수용력</div><p>처음에는 J자처럼 빠르게 늘지만, 개체가 많아지면 먹이·공간 등을 둘러싼 경쟁이 커집니다. 이 실험에서는 경쟁에 의한 추가 사망이 증가하도록 설정했습니다. <span style="color:#087e76;font-weight:800">개체 수가 K의 절반 부근에서 순증가량이 가장 크고</span>, K에 가까워질수록 출생과 전체 사망이 균형을 이루어 성장 속도가 0에 가까워집니다.</p><div class="step-chain"><span>개체 수 ↑</span> → <span>자원 경쟁 ↑</span> → <span>순증가량 ↓</span> → <span>K 부근 안정</span></div></article>
+  </section>
+
+  <section class="quiz" aria-labelledby="quizTitle"><div class="eyebrow">🎯 마지막 확인 문제</div><h2 id="quizTitle">S자형은 왜 평평해질까?</h2><p>개체군이 환경수용력 K에 가까워질 때 가장 알맞은 설명을 골라 보세요.</p><div class="answers"><button type="button" class="answer" data-choice="0">① 시간이 지나면 모든 개체의 번식 능력이 사라져서</button><button type="button" class="answer" data-choice="1">② 자원 경쟁 등 환경저항으로 순증가량이 줄어들어서</button><button type="button" class="answer" data-choice="2">③ 개체군이 정확히 K에 도달하면 출생이 완전히 멈춰서</button></div><div class="quiz-feedback" id="quizFeedback" role="status"></div></section>
+  <p class="foot">수업용 단순화 모형입니다. 각 세대의 개체 수·출생·사망은 기대값이므로 소수점으로 표시됩니다. 실제 개체군에는 이입·이출, 시간 지연, 환경 변화, 자원 경쟁으로 인한 출생률 감소 등도 작용합니다. J자형 성장도 현실에서 무한히 유지되지는 않습니다.</p>
+</main>
+<script>
+(function(){
+  'use strict';
+  const $ = id=>document.getElementById(id);
+  const MAX=30;
+  const defaults={initial:20,birth:26,death:6,capacity:160};
+  let opts={...defaults},t=0,mode='both',speed=1,interval=null,species='🐰';
+  let series={j:[],s:[]};
+  const svgNS='http://www.w3.org/2000/svg';
+  const create=(tag,props={})=>{const el=document.createElementNS(svgNS,tag);Object.keys(props).forEach(k=>el.setAttribute(k,props[k]));return el};
+  function format(n){return Number(n).toLocaleString('ko-KR',{minimumFractionDigits:1,maximumFractionDigits:1})}
+  function signed(n){return (n>=-1e-8?'+':'−')+format(Math.abs(n))}
+  function contributions(n,isS){
+    const b=n*opts.birth/100;
+    const d=n*opts.death/100;
+    const competition=isS?(opts.birth-opts.death)/100*n*n/opts.capacity:0;
+    return {birth:b,death:d,competition,net:b-d-competition};
+  }
+  function recompute(){
+    const j=[opts.initial],s=[opts.initial];
+    for(let i=1;i<=MAX;i++){
+      const jNew=j[i-1]+contributions(j[i-1],false).net;
+      const sNew=s[i-1]+contributions(s[i-1],true).net;
+      j.push(Math.max(0,jNew));s.push(Math.max(0,sNew));
+    }
+    series={j,s};
+  }
+  function stop(){if(interval!==null){clearInterval(interval);interval=null} $('play').textContent='▶ 자동 재생'}
+  function changeTime(next){t=Math.max(0,Math.min(MAX,Math.round(next))); if(t===MAX)stop();render()}
+  function start(){
+    if(interval!==null){stop();return}
+    if(t===MAX)t=0;
+    $('play').textContent='Ⅱ 일시정지';render();
+    interval=setInterval(()=>changeTime(t+1),speed===2?350:730);
+  }
+  function restartForSettings(){stop();t=0;recompute();render()}
+  function textSvg(x,y,string,opts={}){
+    const tx=create('text',{x,y,fill:opts.fill||'#819499','font-size':opts.size||10,'font-weight':opts.weight||600,'text-anchor':opts.anchor||'start'});tx.textContent=string;return tx;
+  }
+  function renderGraph(){
+    const W=360,H=237,L=40,R=339,T=16,B=202;
+    const maxY=opts.capacity*1.6;
+    const x=i=>L+(R-L)*i/MAX;
+    const y=n=>B-(n/maxY)*(B-T);
+    const showJ=mode!=='s',showS=mode!=='j';
+    const g=$('grid');g.replaceChildren();
+    for(let m=0;m<=3;m++){
+      const v=m*opts.capacity/2,yy=y(v);
+      g.appendChild(create('line',{x1:L,y1:yy,x2:R,y2:yy,stroke:m===2?'#a2c8bd':'#e9eff0','stroke-width':m===2?1.4:1,'stroke-dasharray':m===2?'5 5':'3 5'}));
+      const label=m===2?'K='+opts.capacity: (m===0?'0':m===1?'K/2': '1.5K');
+      g.appendChild(textSvg(33,yy+3.5,label,{anchor:'end',size:m===2?10:9.5,weight:m===2?850:600,fill:m===2?'#1c9385':'#849598'}));
+    }
+    [0,10,20,30].forEach(i=>{const xx=x(i);g.appendChild(textSvg(xx,B+18,String(i),{anchor:'middle',size:10}));});
+    g.appendChild(create('line',{x1:L,y1:T,x2:L,y2:B,stroke:'#c6d3d5','stroke-width':1}));
+    g.appendChild(create('line',{x1:L,y1:B,x2:R,y2:B,stroke:'#c6d3d5','stroke-width':1}));
+    g.appendChild(textSvg(L,T-7,'개체 수',{size:9.3}));
+    g.appendChild(textSvg(R,B+32,'세대',{size:9.3,anchor:'end'}));
+    const line=key=>series[key].slice(0,t+1).map((v,i)=>(i===0?'M':'L')+x(i).toFixed(2)+','+y(v).toFixed(2)).join(' ');
+    const sLine=showS?line('s'):'';
+    $('sPath').setAttribute('d',sLine);
+    $('jPath').setAttribute('d',showJ?line('j'):'');
+    $('sArea').setAttribute('d',showS && t>0 ?sLine+' L'+x(t).toFixed(2)+','+B+' L'+L+','+B+' Z':'');
+    const point=$('pointMarkers');point.replaceChildren();
+    [['j',showJ,'#fa785b'],['s',showS,'#079f91']].forEach(([key,show,color])=>{
+      if(!show)return;
+      const p=series[key][t],cx=x(t),cy=y(p);
+      if(cy>=T && cy<=B){point.appendChild(create('circle',{cx,cy,r:6.5,fill:'#fff',stroke:color,'stroke-width':3}));}
+    });
+    const overlay=$('graphOverlay');overlay.replaceChildren();
+    if(showJ && t>0 && series.j[t]>maxY){
+      let first=series.j.findIndex(n=>n>maxY);
+      if(first>t)first=t;
+      const xx=x(Math.min(first,t));
+      overlay.appendChild(create('path',{d:`M ${xx-4} 17 L ${xx} 9 L ${xx+4} 17`,fill:'none',stroke:'#fa785b','stroke-width':2.1,'stroke-linecap':'round'}));
+      if(t>=first+2)overlay.appendChild(textSvg(Math.min(xx+12,205),12,'J자형은 위로 계속 증가 ↗',{fill:'#de775d',size:9.2,weight:750}));
+    }
+    const note=t===0?'▶ 한 세대씩 진행하거나 자동 재생해 보세요.':
+      (showJ && series.j[t]>maxY?'J자형은 그래프 범위를 넘어 계속 증가하고 있어요.':
+       (showS && series.s[t]>=opts.capacity*.94?'S자형은 환경수용력 K에 가까워지고 있어요.':'기울기(증가 속도)가 어떻게 변하는지 보세요.'));
+    $('graphNote').textContent=note;
+    $('graph').setAttribute('aria-label',`${t}세대: J자형 ${format(series.j[t])}개체, S자형 ${format(series.s[t])}개체, 환경수용력 ${opts.capacity}개체`);
+  }
+  function renderExplanation(){
+    let title,desc,rule;
+    const n=series.s[t],K=opts.capacity,r=(opts.birth-opts.death)/100;
+    if(t===0){
+      title='같은 출발점, 다른 성장 법칙';
+      desc='두 개체군의 출생률과 자연 사망률은 같습니다. 그러나 S자형에는 자원 경쟁에 따른 환경저항이 추가됩니다. 세대를 진행하며 두 곡선의 차이를 찾아보세요.';
+      rule='J자형: 순증가량 = r × N　/　S자형: 순증가량 = r × N × (1 − N/K)';
+    } else if(mode==='j'){
+      title='개체가 늘수록 증가 폭이 더 커져요';
+      desc=`현재 ${t}세대의 개체 수는 약 ${format(series.j[t])}개체입니다. 번식 가능한 개체가 많아져 다음 세대에는 ${format(contributions(series.j[t],false).net)}개체가 더 늘어납니다. 일정한 증가율이 반복되므로 곡선이 점점 가팔라집니다.`;
+      rule='환경저항을 반영하지 않음 → 매 세대 일정한 비율로 증가 → J자형';
+    } else if(mode==='s'){
+      if(n<K*.40){title='아직은 자원이 넉넉해서 빠르게 늘어요';desc=`현재 약 ${format(n)}개체로, 환경수용력의 ${Math.round(n/K*100)}%입니다. 경쟁이 비교적 적고 개체 수도 늘어나는 중이어서 세대별 순증가량이 커지는 구간입니다.`;}
+      else if(n<K*.65){title='개체 수가 K/2일 때 증가량이 가장 커요';desc=`현재 환경수용력의 ${Math.round(n/K*100)}%입니다. 개체가 많아지는 효과와 자원 경쟁의 방해가 맞서면서 순증가량이 최대가 되는 구간입니다. 이제부터 증가량이 점차 줄기 시작합니다.`;}
+      else if(n<K*.93){title='환경저항 때문에 성장 속도가 느려져요';desc=`현재 환경수용력의 ${Math.round(n/K*100)}%입니다. 개체 수는 여전히 늘고 있지만 먹이·공간 경쟁에 따른 추가 사망이 늘어나, 세대별 순증가량은 오히려 줄고 있습니다.`;}
+      else {title='출생과 사망이 균형을 이루어 가요';desc=`현재 ${format(n)}개체로 환경수용력 ${K}개체에 가까워졌습니다. 출생 개체 수와 전체 사망 개체 수가 거의 같아져, 개체군의 순증가량이 0에 가까워집니다.`;}
+      rule=`현재 환경저항 계수 N/K ≈ ${(n/K*100).toFixed(1)}%　·　순증가량 ≈ ${format(r*n*(1-n/K))}개체`;
+    } else {
+      if(t<=5){title='출발은 비슷해도 원인은 달라요';desc='처음에는 두 모형 모두 증가합니다. J자형은 개체 수에 비례하여 증가 폭이 커지고, S자형은 개체 수가 늘면서 환경저항도 함께 커집니다.';}
+      else if(n<K*.65){title='S자형에서는 이미 경쟁이 시작됐어요';desc=`J자형 ${format(series.j[t])}개체, S자형 ${format(n)}개체입니다. S자형은 환경저항이 추가 사망을 만들어 J자형보다 증가 폭이 작아집니다. K/2 부근에서 S자형의 증가량이 최대가 됩니다.`;}
+      else if(n<K*.93){title='J자는 가팔라지고 S자는 완만해져요';desc='J자형은 순증가량이 계속 커집니다. 반대로 S자형은 자원 경쟁이 커져 순증가량이 줄어들고, 위로 휘어지던 곡선이 아래로 휘기 시작합니다.';}
+      else {title='결정적인 차이: 환경수용력 K';desc=`J자형에서는 증가가 멈추지 않지만, S자형은 ${opts.capacity}개체 부근에서 출생과 전체 사망이 거의 같아집니다. 그래서 S자형만 수평에 가까워집니다.`;}
+      rule=`이번 세대 순증가량 비교　J자형 ${signed(contributions(series.j[t],false).net)}　/　S자형 ${signed(contributions(n,true).net)}`;
+    }
+    $('whyTitle').textContent=title;$('whyText').textContent=desc;$('whyRule').textContent=rule;
+  }
+  function renderCalc(key){
+    const isS=key==='s',n=series[key][t],data=contributions(n,isS);
+    $(key+'Birth').textContent='+'+format(data.birth);
+    $(key+'Death').textContent='−'+format(data.death);
+    if(isS)$('sCompetition').textContent='−'+format(data.competition);
+    $(key+'Net').textContent=signed(data.net);
+    $(key+'Summary').textContent=signed(data.net)+' 개체';
+  }
+  function render(){
+    const j=series.j[t],s=series.s[t];
+    $('popJ').textContent=format(j);$('popS').textContent=format(s);
+    $('deltaJ').textContent='다음 세대 순증가 '+signed(contributions(j,false).net);
+    $('deltaS').textContent='다음 세대 순증가 '+signed(contributions(s,true).net);
+    $('generationText').textContent=t+' / 30세대';
+    $('generation').value=t;
+    $('generation').style.setProperty('--fill',t/MAX*100+'%');
+    $('reset').disabled=t===0;
+    $('next').disabled=t===MAX;
+    $('last').disabled=t===MAX;
+    $('stats').classList.toggle('single',mode!=='both');
+    $('statJ').hidden=mode==='s';$('statS').hidden=mode==='j';
+    $('legendJ').hidden=mode==='s';$('legendS').hidden=mode==='j';
+    $('calcJ').hidden=mode==='s';$('calcS').hidden=mode==='j';
+    const cg=$('capacityGroup'); cg.classList.toggle('control-disabled',mode==='j');
+    $('capacity').disabled=mode==='j';
+    $('capacityDesc').textContent=mode==='j'?'J자형 성장에는 환경수용력이 반영되지 않습니다.':'서식지가 장기간 유지할 수 있는 개체 수 · S자형에만 영향을 줍니다.';
+    document.querySelectorAll('[data-mode]').forEach(btn=>btn.setAttribute('aria-pressed',String(btn.dataset.mode===mode)));
+    document.querySelectorAll('[data-speed]').forEach(btn=>btn.setAttribute('aria-pressed',String(Number(btn.dataset.speed)===speed)));
+    for(const key in opts){const el=$(key);el.value=opts[key];el.style.setProperty('--fill',((opts[key]-Number(el.min))/(Number(el.max)-Number(el.min))*100)+'%')}
+    $('initialValue').textContent=opts.initial+'개체';$('birthValue').textContent=opts.birth+'%';$('deathValue').textContent=opts.death+'%';$('capacityValue').textContent=opts.capacity+'개체';
+    $('graph-title');renderGraph();renderExplanation();renderCalc('j');renderCalc('s');
+  }
+  Object.keys(defaults).forEach(key=>$(key).addEventListener('input',e=>{opts[key]=Number(e.target.value);restartForSettings()}));
+  $('resetSettings').addEventListener('click',()=>{opts={...defaults};restartForSettings()});
+  $('species').addEventListener('change',e=>{species=e.target.value;document.querySelector('.brand-icon').textContent=species;document.querySelectorAll('.species-icon').forEach(el=>el.textContent=species)});
+  $('reset').addEventListener('click',()=>{stop();changeTime(0)});
+  $('next').addEventListener('click',()=>{stop();changeTime(t+1)});
+  $('last').addEventListener('click',()=>{stop();changeTime(MAX)});
+  $('play').addEventListener('click',start);
+  $('generation').addEventListener('input',e=>{stop();changeTime(Number(e.target.value))});
+  document.querySelectorAll('[data-mode]').forEach(btn=>btn.addEventListener('click',()=>{stop();mode=btn.dataset.mode;render()}));
+  document.querySelectorAll('[data-speed]').forEach(btn=>btn.addEventListener('click',()=>{speed=Number(btn.dataset.speed); if(interval!==null){stop();start()}else render()}));
+  document.querySelectorAll('[data-choice]').forEach(btn=>btn.addEventListener('click',()=>{
+    document.querySelectorAll('[data-choice]').forEach(b=>b.classList.remove('correct','wrong'));
+    const correct=btn.dataset.choice==='1';btn.classList.add(correct?'correct':'wrong');
+    $('quizFeedback').textContent=correct?'정답! 개체 수가 늘면 환경저항이 커져 출생과 전체 사망이 균형에 가까워집니다. S자형 곡선이 평평해지는 이유입니다.':'다시 생각해 보세요. S자형에서도 개체는 계속 태어납니다. 출생과 사망의 차이, 즉 순증가량이 어떻게 달라지는지가 중요해요.';
+  }));
+  recompute();render();
+})();
+</script>
+</body>
+</html>
